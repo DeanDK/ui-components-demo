@@ -153,7 +153,7 @@ export function Timeline<T extends TimelineItem>({
       >
         <p>
           <strong>Navigation:</strong> Use arrow keys to move between items.
-          Left/Right for groups, Up/Down for items. Press Enter to select.
+          Left/Right for groups, Up/Down for items. Press Left-Click to select.
         </p>
       </div>
 
