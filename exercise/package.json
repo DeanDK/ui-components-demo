@@ -1,8 +1,9 @@
 {
-  "name": "exercise",
+  "name": "ui-components-exercise",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": "Dean Bozic",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

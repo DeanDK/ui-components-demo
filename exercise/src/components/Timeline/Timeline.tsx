@@ -4,115 +4,76 @@ import * as React from 'react';
 
 import {
   formatEventDate,
-  formatEventTime,
-  groupEventsByDay,
+  groupItems,
+  groupItemsByDay,
 } from '@/utils/dateHelpers';
 
 import { useTimelineNavigation } from './hooks/useTimelineNavigation';
 import styles from './Timeline.module.css';
 import type {
-  TimelineEventProps,
   TimelineGroupProps,
+  TimelineItem,
+  TimelineItemWrapperProps,
   TimelineProps,
 } from './Timeline.types';
 
-function TimelineEvent({
-  event,
-  onEventClick,
-  eventIndex,
+export function TimelineItemWrapper<T extends TimelineItem>({
+  item,
+  onItemClick,
+  renderItem,
+  itemIndex,
   groupIndex,
   isFocused,
-}: TimelineEventProps) {
-  const priorityClass =
-    styles[
-      `priority${event.priority.charAt(0).toUpperCase() + event.priority.slice(1)}`
-    ];
-
-  const statusClass =
-    styles[
-      `status${event.status.charAt(0).toUpperCase() + event.status.slice(1)}`
-    ];
-
+}: TimelineItemWrapperProps<T>) {
   const handleClick = () => {
-    onEventClick?.(event);
+    onItemClick?.(item);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if ((e.key === 'Enter' || e.key === ' ') && onEventClick) {
+    if ((e.key === 'Enter' || e.key === ' ') && onItemClick) {
       e.stopPropagation();
     }
   };
 
   return (
     <article
-      className={clsx(styles.event, priorityClass, isFocused && styles.focused)}
+      className={clsx(styles.item, isFocused && styles.focused)}
       data-group-index={groupIndex}
-      data-event-index={eventIndex}
+      data-item-index={itemIndex}
       tabIndex={0}
       onClick={handleClick}
       onKeyPress={handleKeyPress}
       role="button"
-      aria-label={`${event.title} at ${formatEventTime(event.date)}, ${event.status}, ${event.priority} priority`}
+      aria-label={`Item ${itemIndex + 1}`}
     >
-      <div className={styles.eventIndicator} aria-hidden="true" />
-
-      <time className={styles.eventTime} dateTime={event.date.toISOString()}>
-        {formatEventTime(event.date)}
-      </time>
-
-      <div className={styles.eventContent}>
-        <h3 className={styles.eventTitle}>{event.title}</h3>
-
-        {event.description && (
-          <p className={styles.eventDescription}>{event.description}</p>
-        )}
-
-        <div className={styles.eventMeta}>
-          <span className={clsx(styles.badge, statusClass)}>
-            {event.status}
-          </span>
-          <span className={clsx(styles.badge, priorityClass)}>
-            {event.priority}
-          </span>
-          {event.category && (
-            <span className={styles.badge}>{event.category}</span>
-          )}
-        </div>
-      </div>
+      <div className={styles.itemIndicator} aria-hidden="true" />
+      <div className={styles.itemContent}>{renderItem(item)}</div>
     </article>
   );
 }
 
-function TimelineGroup({
+export function TimelineGroup<T extends TimelineItem>({
   date,
-  events,
-  onEventClick,
+  items,
+  onItemClick,
+  renderItem,
   groupIndex,
-}: TimelineGroupProps) {
+  renderGroupHeader,
+}: TimelineGroupProps<T>) {
   return (
-    <section
-      className={styles.group}
-      aria-label={`Events for ${formatEventDate(new Date(date))}`}
-    >
+    <section className={styles.group} aria-label={`Group ${groupIndex + 1}`}>
       <div className={styles.groupHeader}>
-        <h2 className={styles.groupDate}>
-          <time dateTime={date}>{formatEventDate(new Date(date))}</time>
-        </h2>
-        <span
-          className={styles.groupCount}
-          aria-label={`${events.length} events`}
-        >
-          {events.length} {events.length === 1 ? 'event' : 'events'}
-        </span>
+        {renderGroupHeader?.(new Date(date), items.length)}
       </div>
 
       <div className={styles.groupEvents}>
-        {events.map((event, eventIndex) => (
-          <TimelineEvent
-            key={event.id}
-            event={event}
-            onEventClick={onEventClick}
-            eventIndex={eventIndex}
+        {items.map((item, itemIndex) => (
+          <TimelineItemWrapper
+            key={item.id}
+            item={item}
+            onItemClick={onItemClick}
+            renderItem={renderItem}
+            itemIndex={itemIndex}
             groupIndex={groupIndex}
             isFocused={false}
           />
@@ -122,29 +83,52 @@ function TimelineGroup({
   );
 }
 
-export function Timeline({ events, onEventClick, className }: TimelineProps) {
-  const groupedEventsByDayInDescOrder = useMemo(() => {
-    const grouped = groupEventsByDay(events);
-    return Array.from(grouped.entries()).sort((a, b) => {
-      return new Date(b[0]).getTime() - new Date(a[0]).getTime();
-    });
-  }, [events]);
+export function Timeline<T extends TimelineItem>({
+  items,
+  onItemClick,
+  renderItem,
+  renderGroupHeader,
+  groupBy,
+  className,
+}: TimelineProps<T>) {
+  const groupedItems = useMemo(() => {
+    const grouped = groupBy
+      ? groupItems(items, (item) => groupBy(item.date))
+      : groupItemsByDay(items);
 
-  const { focusedPosition, announcement, handleKeyDown, timelineRef } =
-    useTimelineNavigation(groupedEventsByDayInDescOrder, onEventClick);
+    return Array.from(grouped.entries()).sort(
+      (a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime(),
+    );
+  }, [items, groupBy]);
 
-  if (events.length === 0) {
+  const { announcement, handleKeyDown, timelineRef } = useTimelineNavigation(
+    groupedItems,
+    onItemClick,
+  );
+
+  if (items.length === 0) {
     return (
       <div className={clsx(styles.container, className)}>
         <div className={styles.emptyState}>
           <span className={styles.emptyIcon} aria-hidden="true">
             📭
           </span>
-          <p>No events to display</p>
+          <p>No items to display</p>
         </div>
       </div>
     );
   }
+
+  const defaultGroupHeader = (date: Date, count: number) => (
+    <>
+      <h2 className={styles.groupDate}>
+        <time dateTime={date.toISOString()}>{formatEventDate(date)}</time>
+      </h2>
+      <span className={styles.groupCount} aria-label={`${count} items`}>
+        {count} {count === 1 ? 'item' : 'items'}
+      </span>
+    </>
+  );
 
   return (
     <div
@@ -152,7 +136,7 @@ export function Timeline({ events, onEventClick, className }: TimelineProps) {
       ref={timelineRef}
       onKeyDown={handleKeyDown}
       role="feed"
-      aria-label="Event timeline"
+      aria-label="Timeline"
     >
       <div
         className={styles.srOnly}
@@ -168,29 +152,27 @@ export function Timeline({ events, onEventClick, className }: TimelineProps) {
         aria-label="Keyboard navigation instructions"
       >
         <p>
-          <strong>Navigation:</strong> Use arrow keys to move between events.
-          Left/Right for days, Up/Down for events. Press Enter to select.
+          <strong>Navigation:</strong> Use arrow keys to move between items.
+          Left/Right for groups, Up/Down for items. Press Enter to select.
         </p>
       </div>
 
       <div className={styles.timeline}>
-        {groupedEventsByDayInDescOrder.map(
-          ([date, groupEvents], groupIndex) => (
-            <TimelineGroup
-              key={date}
-              date={date}
-              events={groupEvents}
-              onEventClick={onEventClick}
-              groupIndex={groupIndex}
-              isActive={focusedPosition.groupIndex === groupIndex}
-            />
-          ),
-        )}
+        {groupedItems.map(([dateKey, groupItems], groupIndex) => (
+          <TimelineGroup
+            key={dateKey}
+            date={dateKey}
+            items={groupItems}
+            onItemClick={onItemClick}
+            renderItem={renderItem}
+            groupIndex={groupIndex}
+            renderGroupHeader={renderGroupHeader || defaultGroupHeader}
+          />
+        ))}
       </div>
 
       <div className={styles.summary} aria-live="polite">
-        Showing {events.length} events across{' '}
-        {groupedEventsByDayInDescOrder.length} days
+        Showing {items.length} items across {groupedItems.length} groups
       </div>
     </div>
   );

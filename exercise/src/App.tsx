@@ -2,6 +2,7 @@ import './App.css';
 
 import { DataGrid } from '@/components/DataGrid/DataGrid';
 import { EventForm } from '@/components/EventForm/EventForm';
+import { EventTimelineItem } from '@/components/Timeline/renderers/EventTimelineItem';
 import { Timeline } from '@/components/Timeline/Timeline';
 import { eventColumns } from '@/config/dataGridColumns';
 import { useEventManager } from '@/hooks/useEventManager';
@@ -14,7 +15,6 @@ function App() {
     editingEvent,
     successMessage,
     handleSaveEvent,
-    handleEventClick,
     handleCloseForm,
     handleNewEvent,
   } = useEventManager({
@@ -45,17 +45,18 @@ function App() {
         <section className="section">
           <h2 className="section-title">📍 Timeline</h2>
           <p className="section-description">
-            Recent 50 events grouped by day. Use arrow keys to navigate between
-            events.
+            Recent 50 events grouped by day. Use arrow keys to navigate.
           </p>
-          <Timeline events={timelineEvents} onEventClick={handleEventClick} />
+          <Timeline
+            items={timelineEvents}
+            renderItem={(event) => <EventTimelineItem event={event} />}
+          />
         </section>
 
         <section className="section">
           <h2 className="section-title">📊 All Events</h2>
           <p className="section-description">
-            Showing {events.length} events. Click column headers to sort, use
-            filters to search.
+            Showing {events.length} events. Click column headers to sort.
           </p>
           <DataGrid
             data={events}

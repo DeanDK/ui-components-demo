@@ -54,11 +54,6 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
     [editingEvent, showSuccessMessage],
   );
 
-  const handleEventClick = useCallback((event: Event) => {
-    setEditingEvent(event);
-    setIsFormOpen(true);
-  }, []);
-
   const handleCloseForm = useCallback(() => {
     setIsFormOpen(false);
     setEditingEvent(null);
@@ -69,22 +64,6 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
     setIsFormOpen(true);
   }, []);
 
-  const handleDeleteEvent = useCallback(
-    (eventId: string) => {
-      setEvents((prev) => prev.filter((evt) => evt.id !== eventId));
-      showSuccessMessage('✓ Event deleted successfully!');
-    },
-    [showSuccessMessage],
-  );
-
-  const refreshEvents = useCallback(
-    (count?: number) => {
-      setEvents(generateMockEvents(count || initialCount));
-      showSuccessMessage('✓ Events refreshed!');
-    },
-    [initialCount, showSuccessMessage],
-  );
-
   return {
     events,
     timelineEvents,
@@ -93,11 +72,8 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
     successMessage,
 
     handleSaveEvent,
-    handleEventClick,
     handleCloseForm,
     handleNewEvent,
-    handleDeleteEvent,
-    refreshEvents,
 
     setEvents,
   };

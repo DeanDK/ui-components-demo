@@ -1,46 +1,85 @@
-import type { Event } from '@/types';
+import type * as React from 'react';
 
-export interface TimelineProps {
-  /** List of timeline events to render */
-  events: Event[];
+/**
+ * Base interface for timeline items.
+ * Any item rendered in the timeline must at least provide an id and date.
+ */
+export interface TimelineItem {
+  /** Unique identifier for the timeline item */
+  id: string;
 
-  /** Optional callback triggered when an event item is clicked */
-  onEventClick?: (event: Event) => void;
+  /** Date associated with the timeline item (used for grouping and ordering) */
+  date: Date;
+}
 
-  /** Optional custom CSS class applied to the timeline container */
+/**
+ * Generic props for the Timeline component.
+ * Allows rendering any data type that extends TimelineItem.
+ */
+export interface TimelineProps<T extends TimelineItem> {
+  /** Array of items to render in the timeline */
+  items: T[];
+
+  /** Optional callback triggered when a timeline item is clicked */
+  onItemClick?: (item: T) => void;
+
+  /** Function responsible for rendering the content of each timeline item */
+  renderItem: (item: T) => React.ReactNode;
+
+  /** Optional function to render a custom group header */
+  renderGroupHeader?: (date: Date, count: number) => React.ReactNode;
+
+  /** Optional custom grouping function (e.g., group by day, month, etc.) */
+  groupBy?: (date: Date) => string;
+
+  /** Optional CSS class applied to the timeline container */
   className?: string;
 }
 
-export interface TimelineGroupProps {
-  /** Date label used as the group heading (e.g., "Today", "March 12, 2026") */
+/**
+ * Props for an internal timeline group component.
+ * Represents a collection of items belonging to the same group (e.g., same day).
+ */
+export interface TimelineGroupProps<T extends TimelineItem> {
+  /** Group identifier (usually a formatted date string) */
   date: string;
 
-  /** Events belonging to this date group */
-  events: Event[];
+  /** Items belonging to this group */
+  items: T[];
 
-  /** Optional callback triggered when an event inside the group is clicked */
-  onEventClick?: (event: Event) => void;
+  /** Optional callback triggered when an item is clicked */
+  onItemClick?: (item: T) => void;
 
-  /** Index of the group within the timeline (used for ordering or focus management) */
+  /** Render function used to display each item */
+  renderItem: (item: T) => React.ReactNode;
+
+  /** Index of the group within the timeline */
   groupIndex: number;
 
-  /** Indicates whether this group is currently active or focused */
-  isActive: boolean;
+  /** Optional custom renderer for the group header */
+  renderGroupHeader?: (date: Date, count: number) => React.ReactNode;
 }
 
-export interface TimelineEventProps {
-  /** Event data object used to render the timeline item */
-  event: Event;
+/**
+ * Props for the internal wrapper around each timeline item.
+ * Handles focus state and keyboard navigation logic.
+ */
+export interface TimelineItemWrapperProps<T extends TimelineItem> {
+  /** The item data being rendered */
+  item: T;
 
-  /** Optional callback triggered when the event is clicked */
-  onEventClick?: (event: Event) => void;
+  /** Optional callback triggered when the item is clicked */
+  onItemClick?: (item: T) => void;
 
-  /** Index of the event within its group */
-  eventIndex: number;
+  /** Render function used to display the item content */
+  renderItem: (item: T) => React.ReactNode;
 
-  /** Index of the parent group containing this event */
+  /** Index of the item within its group */
+  itemIndex: number;
+
+  /** Index of the parent group containing the item */
   groupIndex: number;
 
-  /** Indicates whether this specific event item is currently focused */
+  /** Indicates whether the item is currently focused for keyboard navigation */
   isFocused: boolean;
 }

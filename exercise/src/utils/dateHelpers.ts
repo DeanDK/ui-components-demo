@@ -1,7 +1,5 @@
 import { format, isToday, isTomorrow, isYesterday, startOfDay } from 'date-fns';
 
-import type { Event } from '@/types';
-
 export const formatEventDate = (date: Date): string => {
   if (isToday(date)) {
     return 'Today';
@@ -22,22 +20,27 @@ export const formatEventTime = (date: Date): string => {
   return format(date, 'h:mm a');
 };
 
-export const groupEventsByDay = (events: Event[]): Map<string, Event[]> => {
-  const groupedEventsWithinEachDay = new Map<string, Event[]>();
+export const groupItems = <T>(
+  items: T[],
+  getKey: (item: T) => string,
+): Map<string, T[]> => {
+  const grouped = new Map<string, T[]>();
 
-  events.forEach((event) => {
-    const dayKey = startOfDay(event.date).toISOString();
-    if (!groupedEventsWithinEachDay.has(dayKey)) {
-      groupedEventsWithinEachDay.set(dayKey, []);
+  items.forEach((item) => {
+    const key = getKey(item);
+
+    if (!grouped.has(key)) {
+      grouped.set(key, []);
     }
-    groupedEventsWithinEachDay.get(dayKey)!.push(event);
+
+    grouped.get(key)!.push(item);
   });
 
-  groupedEventsWithinEachDay.forEach((dayEvents) => {
-    dayEvents.sort((a, b) => a.date.getTime() - b.date.getTime());
-  });
+  return grouped;
+};
 
-  return groupedEventsWithinEachDay;
+export const groupItemsByDay = <T extends { date: Date }>(items: T[]) => {
+  return groupItems(items, (item) => startOfDay(item.date).toISOString());
 };
 
 export { format };
