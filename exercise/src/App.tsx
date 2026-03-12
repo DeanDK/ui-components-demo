@@ -1,12 +1,15 @@
 import './App.css';
 
-import { DataGrid } from '@/components/DataGrid/DataGrid';
-import { Form } from '@/components/Form/Form.tsx';
+import { DataGrid } from '@/components/DataGrid';
+import { Form } from '@/components/Form';
 import { EventTimelineItem } from '@/components/Timeline/renderers/EventTimelineItem';
 import { Timeline } from '@/components/Timeline/Timeline';
-import { eventColumns } from '@/config/dataGridColumns';
-import { eventFormFields, eventSchema } from '@/config/eventFormFields.tsx';
-import { useEventManager } from '@/hooks/useEventManager';
+import { eventColumns } from '@/features/events/config/dataGridColumns';
+import {
+  eventFormFields,
+  eventSchema,
+} from '@/features/events/config/eventFormFields.tsx';
+import { useEventManager } from '@/features/events/hooks/useEventManager/useEventManager.ts';
 
 function App() {
   const {

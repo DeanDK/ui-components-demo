@@ -1,12 +1,8 @@
 import type * as React from 'react';
 import { useCallback, useRef, useState } from 'react';
 
-import type { TimelineItem } from '../Timeline.types';
-
-interface NavigationPosition {
-  groupIndex: number;
-  itemIndex: number;
-}
+import type { TimelineItem } from '../../Timeline.types.ts';
+import type { NavigationPosition } from './useTimelineNavigation.types.ts';
 
 export const useTimelineNavigation = <T extends TimelineItem>(
   groupedItems: [string, T[]][],

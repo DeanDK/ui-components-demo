@@ -6,7 +6,7 @@ import {
   formatEventDate,
   groupItems,
   groupItemsByDay,
-} from '@/utils/dateHelpers';
+} from '@/features/events/utils/dateHelpers';
 
 import { useTimelineNavigation } from './hooks/useTimelineNavigation';
 import styles from './Timeline.module.css';

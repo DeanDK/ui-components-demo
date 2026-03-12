@@ -1,7 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
-import type { Event } from '@/types';
+import type { Event } from '@/features/events/types';
 
 export const eventColumns: ColumnDef<Event>[] = [
   {

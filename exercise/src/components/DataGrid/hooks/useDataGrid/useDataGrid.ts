@@ -12,7 +12,7 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 
-import type { UseDataGridProps } from '@/components/DataGrid/DataGrid.types.ts';
+import type { UseDataGridProps } from './useDataGrid.types.ts';
 
 export const useDataGrid = <T>({
   data,

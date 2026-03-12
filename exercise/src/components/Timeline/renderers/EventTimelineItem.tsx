@@ -1,13 +1,9 @@
 import clsx from 'clsx';
 
-import type { Event } from '@/types';
-import { formatEventTime } from '@/utils/dateHelpers';
+import { formatEventTime } from '@/features/events/utils/dateHelpers';
 
 import styles from './EventTimelineItem.module.css';
-
-interface EventTimelineItemProps {
-  event: Event;
-}
+import type { EventTimelineItemProps } from './EventTimelineItem.types.ts';
 
 export function EventTimelineItem({ event }: EventTimelineItemProps) {
   return (

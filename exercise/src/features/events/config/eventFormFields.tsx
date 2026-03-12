@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import type { FormField } from '@/components/Form/Form.types';
+import type { FormField } from '@/components/Form/Form.types.ts';
 
 export const eventSchema = z.object({
   title: z

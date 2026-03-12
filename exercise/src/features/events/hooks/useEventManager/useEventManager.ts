@@ -1,16 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { z } from 'zod';
 
-import type { eventSchema } from '@/config/eventFormFields.tsx';
-import type { Event } from '@/types';
-import { generateMockEvents } from '@/utils/mockData';
-
-interface UseEventManagerOptions {
-  initialCount?: number;
-  timelineLimit?: number;
-}
-
-export type EventFormData = z.output<typeof eventSchema>;
+import type { EventFormData } from '@/features/events/config/eventFormFields.tsx';
+import type { UseEventManagerOptions } from '@/features/events/hooks/useEventManager/types.ts';
+import type { Event } from '@/features/events/types';
+import { generateMockEvents } from '@/features/events/utils/mockData.ts';
 
 export const useEventManager = (options: UseEventManagerOptions = {}) => {
   const { initialCount = 250, timelineLimit = 50 } = options;

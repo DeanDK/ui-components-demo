@@ -1,4 +1,4 @@
-import type { Event } from '@/types';
+import type { Event } from '@/features/events/types';
 
 const titles: string[] = [
   'Team Meeting',
