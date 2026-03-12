@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import type { EventFormData } from '@/features/events/config/eventFormFields.tsx';
-import type { UseEventManagerOptions } from '@/features/events/hooks/useEventManager/types.ts';
 import type { Event } from '@/features/events/types';
 import { generateMockEvents } from '@/features/events/utils/mockData.ts';
+
+import type { UseEventManagerOptions } from './useEventManager.types.ts';
 
 export const useEventManager = (options: UseEventManagerOptions = {}) => {
   const { initialCount = 250, timelineLimit = 50 } = options;
