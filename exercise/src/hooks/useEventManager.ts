@@ -15,12 +15,12 @@ export type EventFormData = z.output<typeof eventSchema>;
 export const useEventManager = (options: UseEventManagerOptions = {}) => {
   const { initialCount = 250, timelineLimit = 50 } = options;
 
-  const [events, setEvents] = useState<Event[]>(() =>
-    generateMockEvents(initialCount),
-  );
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [successMessage, setSuccessMessage] = useState<string>('');
+  const [events, setEvents] = useState<Event[]>(() =>
+    generateMockEvents(initialCount),
+  );
 
   const timelineEvents = useMemo(
     () =>

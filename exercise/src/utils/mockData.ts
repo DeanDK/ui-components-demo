@@ -1,6 +1,6 @@
 import type { Event } from '@/types';
 
-const titles = [
+const titles: string[] = [
   'Team Meeting',
   'Client Presentation',
   'Code Review',
@@ -18,7 +18,7 @@ const titles = [
   'Release Planning',
 ];
 
-const descriptions = [
+const descriptions: string[] = [
   'Discuss quarterly objectives and team goals',
   'Review progress and address blockers',
   'Align on deliverables and timeline',
@@ -26,7 +26,13 @@ const descriptions = [
   'Present findings and recommendations',
 ];
 
-const categories = ['Development', 'Design', 'Management', 'Sales', 'Support'];
+const categories: string[] = [
+  'Development',
+  'Design',
+  'Management',
+  'Sales',
+  'Support',
+];
 
 const STATUSES: Event['status'][] = ['pending', 'completed', 'cancelled'];
 const PRIORITIES: Event['priority'][] = ['low', 'medium', 'high'];

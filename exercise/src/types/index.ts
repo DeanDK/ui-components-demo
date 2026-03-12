@@ -10,8 +10,3 @@ export interface Event {
   priority: EventPriority;
   category?: string;
 }
-
-export interface TimelineGroup {
-  date: string;
-  events: Event[];
-}

@@ -1,5 +1,4 @@
 import type {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -13,13 +12,7 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 
-interface UseDataGridProps<T> {
-  data: T[];
-  columns: ColumnDef<T>[];
-  pageSize?: number;
-  enableSorting?: boolean;
-  enableColumnFilters?: boolean;
-}
+import type { UseDataGridProps } from '@/components/DataGrid/DataGrid.types.ts';
 
 export const useDataGrid = <T>({
   data,
