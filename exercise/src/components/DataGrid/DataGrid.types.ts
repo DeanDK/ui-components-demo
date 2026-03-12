@@ -1,7 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type * as React from 'react';
 
-import type { useDataGrid } from '@/components/hooks/useDataGrid.ts';
+import type { useDataGrid } from '@/components/DataGrid/hooks/useDataGrid.ts';
 
 export interface DataGridProps<T> {
   /** Array of data objects to be displayed in the table */

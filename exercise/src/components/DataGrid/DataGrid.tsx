@@ -1,7 +1,8 @@
 import { flexRender } from '@tanstack/react-table';
 import clsx from 'clsx';
 
-import { useDataGrid } from './../hooks/useDataGrid.ts';
+import { useDataGrid } from '@/components/DataGrid/hooks/useDataGrid.ts';
+
 import styles from './DataGrid.module.css';
 import type {
   DataGridProps,
