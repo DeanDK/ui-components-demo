@@ -14,10 +14,10 @@ export const eventSchema = z.object({
     .max(500, 'Description must be less than 500 characters')
     .optional()
     .or(z.literal('')),
-  status: z.enum<string[]>(['pending', 'completed', 'cancelled'], {
+  status: z.enum(['pending', 'completed', 'cancelled'], {
     error: 'Status is required',
   }),
-  priority: z.enum<string[]>(['low', 'medium', 'high'], {
+  priority: z.enum(['low', 'medium', 'high'], {
     error: 'Priority is required',
   }),
   category: z
