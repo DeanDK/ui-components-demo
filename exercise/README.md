@@ -43,4 +43,4 @@ yarn dev
 
 ### NOTE
 
-When adding a new event, make sure that date fits the date showed in the timeline by the mock data.
+When creating a new event, ensure that the selected date falls within the range of dates displayed in the timeline based on the mock data.
