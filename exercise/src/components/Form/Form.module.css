@@ -111,8 +111,8 @@
 .input,
 .select,
 .textarea {
-    color: black;
     width: 100%;
+    color: black;
     padding: 0.75rem;
     border: 2px solid #d1d5db;
     border-radius: 6px;
@@ -245,7 +245,6 @@
     }
 }
 
-/* Responsive */
 @media (max-width: 640px) {
     .modal {
         max-height: 95vh;
@@ -271,14 +270,4 @@
     .button {
         width: 100%;
     }
-}
-
-/* Focus visible polyfill for older browsers */
-.input:focus-visible,
-.select:focus-visible,
-.textarea:focus-visible,
-.button:focus-visible,
-.closeButton:focus-visible {
-    outline: 2px solid #667eea;
-    outline-offset: 2px;
 }

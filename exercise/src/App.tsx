@@ -1,10 +1,11 @@
 import './App.css';
 
 import { DataGrid } from '@/components/DataGrid/DataGrid';
-import { EventForm } from '@/components/EventForm/EventForm';
+import { Form } from '@/components/Form/Form.tsx';
 import { EventTimelineItem } from '@/components/Timeline/renderers/EventTimelineItem';
 import { Timeline } from '@/components/Timeline/Timeline';
 import { eventColumns } from '@/config/dataGridColumns';
+import { eventFormFields, eventSchema } from '@/config/eventFormFields.tsx';
 import { useEventManager } from '@/hooks/useEventManager';
 
 function App() {
@@ -12,7 +13,6 @@ function App() {
     events,
     timelineEvents,
     isFormOpen,
-    editingEvent,
     successMessage,
     handleSaveEvent,
     handleCloseForm,
@@ -69,10 +69,13 @@ function App() {
       </main>
 
       {isFormOpen && (
-        <EventForm
-          event={editingEvent}
-          onSave={handleSaveEvent}
+        <Form
+          title="Create New Event"
+          fields={eventFormFields}
+          schema={eventSchema}
+          onSubmit={handleSaveEvent}
           onCancel={handleCloseForm}
+          submitLabel="Create Event"
         />
       )}
     </div>

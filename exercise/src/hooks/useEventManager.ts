@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
+import type { z } from 'zod';
 
+import type { eventSchema } from '@/config/eventFormFields.tsx';
 import type { Event } from '@/types';
 import { generateMockEvents } from '@/utils/mockData';
 
@@ -7,6 +9,8 @@ interface UseEventManagerOptions {
   initialCount?: number;
   timelineLimit?: number;
 }
+
+export type EventFormData = z.output<typeof eventSchema>;
 
 export const useEventManager = (options: UseEventManagerOptions = {}) => {
   const { initialCount = 250, timelineLimit = 50 } = options;
@@ -33,25 +37,16 @@ export const useEventManager = (options: UseEventManagerOptions = {}) => {
   }, []);
 
   const handleSaveEvent = useCallback(
-    (eventData: Event) => {
-      if (editingEvent) {
-        setEvents((prev) =>
-          prev.map((evt) => (evt.id === eventData.id ? eventData : evt)),
-        );
-        setEditingEvent(null);
-        setIsFormOpen(false);
-        showSuccessMessage('✓ Event updated successfully!');
-      } else {
-        const newEvent: Event = {
-          ...eventData,
-          id: `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        };
-        setEvents((prev) => [newEvent, ...prev]);
-        setIsFormOpen(false);
-        showSuccessMessage('✓ Event created successfully!');
-      }
+    (eventData: EventFormData) => {
+      const newEvent: Event = {
+        ...eventData,
+        id: `event-${Date.now()}-${Math.random().toString(36)}`,
+      };
+      setEvents((prev) => [newEvent, ...prev]);
+      setIsFormOpen(false);
+      showSuccessMessage('Event created successfully!');
     },
-    [editingEvent, showSuccessMessage],
+    [showSuccessMessage],
   );
 
   const handleCloseForm = useCallback(() => {
