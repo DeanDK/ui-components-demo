@@ -2,8 +2,8 @@ import './App.css';
 
 import { DataGrid } from '@/components/DataGrid';
 import { Form } from '@/components/Form';
+import { Timeline } from '@/components/Timeline';
 import { EventTimelineItem } from '@/components/Timeline/renderers/EventTimelineItem';
-import { Timeline } from '@/components/Timeline/Timeline';
 import { eventColumns } from '@/features/events/config/dataGridColumns';
 import {
   eventFormFields,
