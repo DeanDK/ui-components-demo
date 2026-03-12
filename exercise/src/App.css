@@ -109,7 +109,6 @@ body {
   display: inline-block;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .app-header {
     flex-direction: column;
