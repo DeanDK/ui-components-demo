@@ -15,10 +15,9 @@ The project demonstrates:
 - Feature-based architecture
 - Type-safe React development
 - Clean separation between UI and domain logic
-- Scalable folder organization
 
 ---
-## Environment
+### Environment
 
 - **Node.js:** v24.13.0
 - **Yarn:** 3.6.3
@@ -41,6 +40,15 @@ yarn install
 yarn dev
 ```
 
-### NOTE
+### Important
 
 When creating a new event, ensure that the selected date falls within the range of dates displayed in the timeline based on the mock data.
+
+### Personal Architecture Note
+
+
+For this demo, I used a simple **feature-based structure** to separate reusable UI components from domain-specific logic.
+
+In larger codebases, I typically prefer organizing projects using **Nx or Yarn workspaces**, where components can live in independent packages and be shared across applications. That approach mostly served me well in my previous work experience.
+
+However, for the scope of this exercise, I chose a feature-based structure to keep the project simple while still demonstrating that reusable components (such as `DataGrid`, `Form`, and `Timeline`) are **independent of the business logic** and can be reused across features.
