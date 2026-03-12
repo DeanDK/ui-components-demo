@@ -11,16 +11,16 @@ import prettierConfig from "eslint-config-prettier";
 
 export default [
   {
-    ignores: ["dist", "node_modules"],
+    ignores: ['dist', 'node_modules'],
   },
   js.configs.recommended,
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        ecmaVersion: "latest",
-        sourceType: "module",
+        ecmaVersion: 'latest',
+        sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
         },
@@ -31,31 +31,38 @@ export default [
       },
     },
     plugins: {
-      "@typescript-eslint": tsPlugin,
+      '@typescript-eslint': tsPlugin,
       react: reactPlugin,
-      "react-hooks": reactHooksPlugin,
-      "react-refresh": reactRefreshPlugin,
-      "simple-import-sort": simpleImportSort,
+      'react-hooks': reactHooksPlugin,
+      'react-refresh': reactRefreshPlugin,
+      'simple-import-sort': simpleImportSort,
       prettier: prettierPlugin,
     },
     rules: {
-      "prettier/prettier": "error",
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-      "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/consistent-type-imports": "warn",
-      "react/react-in-jsx-scope": "off",
-      "react/prop-types": "off",
-      "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
-      "simple-import-sort/imports": "error",
-      "simple-import-sort/exports": "error",
-      "no-console": "warn",
-      "no-debugger": "error",
+      'prettier/prettier': 'error',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/consistent-type-imports': 'warn',
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
+      'no-console': 'warn',
+      'no-debugger': 'error',
     },
     settings: {
       react: {
-        version: "detect",
+        version: 'detect',
       },
     },
   },
