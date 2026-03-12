@@ -23,22 +23,21 @@ export const formatEventTime = (date: Date): string => {
 };
 
 export const groupEventsByDay = (events: Event[]): Map<string, Event[]> => {
-  const grouped = new Map<string, Event[]>();
+  const groupedEventsWithinEachDay = new Map<string, Event[]>();
 
   events.forEach((event) => {
     const dayKey = startOfDay(event.date).toISOString();
-    if (!grouped.has(dayKey)) {
-      grouped.set(dayKey, []);
+    if (!groupedEventsWithinEachDay.has(dayKey)) {
+      groupedEventsWithinEachDay.set(dayKey, []);
     }
-    grouped.get(dayKey)!.push(event);
+    groupedEventsWithinEachDay.get(dayKey)!.push(event);
   });
 
-  // Sort events within each day
-  grouped.forEach((dayEvents) => {
+  groupedEventsWithinEachDay.forEach((dayEvents) => {
     dayEvents.sort((a, b) => a.date.getTime() - b.date.getTime());
   });
 
-  return grouped;
+  return groupedEventsWithinEachDay;
 };
 
 export { format };
