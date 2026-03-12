@@ -6,8 +6,7 @@ export const eventSchema = z.object({
     .min(1, 'Title is required')
     .max(100, 'Title must be less than 100 characters'),
   date: z.date({
-    error: 'Date is required',
-    message: 'Please enter a valid date',
+    error: 'Please enter a valid date',
   }),
   description: z
     .string()

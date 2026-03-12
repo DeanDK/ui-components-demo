@@ -1,48 +1,79 @@
 import './App.css';
 
-import { useMemo, useState } from 'react';
-
 import { DataGrid } from '@/components/DataGrid/DataGrid';
+import { EventForm } from '@/components/EventForm/EventForm';
 import { Timeline } from '@/components/Timeline/Timeline';
 import { eventColumns } from '@/config/dataGridColumns';
-import type { Event } from '@/types';
-import { generateMockEvents } from '@/utils/mockData';
+import { useEventManager } from '@/hooks/useEventManager';
 
 function App() {
-  const [events] = useState<Event[]>(() => generateMockEvents(250));
-
-  // Get recent 50 events for timeline (sorted newest first)
-  const timelineEvents = useMemo(
-    () =>
-      events
-        .slice()
-        .sort((a, b) => b.date.getTime() - a.date.getTime())
-        .slice(0, 50),
-    [events],
-  );
-
-  const handleEventClick = (event: Event) => {
-    console.log('Event clicked:', event);
-    // TODO: Open edit modal when EventForm is ready
-  };
+  const {
+    events,
+    timelineEvents,
+    isFormOpen,
+    editingEvent,
+    successMessage,
+    handleSaveEvent,
+    handleEventClick,
+    handleCloseForm,
+    handleNewEvent,
+  } = useEventManager({
+    initialCount: 500,
+    timelineLimit: 50,
+  });
 
   return (
     <div className="app">
       <header className="app-header">
         <h1>📅 Event Manager</h1>
+        <button
+          className="btn btn-primary"
+          onClick={handleNewEvent}
+          aria-label="Create new event"
+        >
+          + New Event
+        </button>
       </header>
+
+      {successMessage && (
+        <div className="success-banner" role="status" aria-live="polite">
+          {successMessage}
+        </div>
+      )}
 
       <main className="app-content">
         <section className="section">
           <h2 className="section-title">📍 Timeline</h2>
+          <p className="section-description">
+            Recent 50 events grouped by day. Use arrow keys to navigate between
+            events.
+          </p>
           <Timeline events={timelineEvents} onEventClick={handleEventClick} />
         </section>
 
         <section className="section">
           <h2 className="section-title">📊 All Events</h2>
-          <DataGrid data={events} columns={eventColumns} pageSize={20} />
+          <p className="section-description">
+            Showing {events.length} events. Click column headers to sort, use
+            filters to search.
+          </p>
+          <DataGrid
+            data={events}
+            columns={eventColumns}
+            pageSize={20}
+            enableColumnFilters={true}
+            enableSorting={true}
+          />
         </section>
       </main>
+
+      {isFormOpen && (
+        <EventForm
+          event={editingEvent}
+          onSave={handleSaveEvent}
+          onCancel={handleCloseForm}
+        />
+      )}
     </div>
   );
 }
