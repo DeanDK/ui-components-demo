@@ -4,9 +4,248 @@ import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import styles from './EventForm.module.css';
-import type { EventFormProps } from './EventForm.types';
+import type {
+  CategoryFieldProps,
+  DateFieldProps,
+  DescriptionFieldProps,
+  EventFormProps,
+  FieldErrorProps,
+  FieldLabelProps,
+  FieldProps,
+  FormActionsProps,
+  ModalProps,
+  PriorityFieldProps,
+  StatusFieldProps,
+  TitleFieldProps,
+} from './EventForm.types';
 import type { EventFormData } from './schema';
 import { eventSchema } from './schema';
+
+function Modal({ children, modalRef, onClose, isEditMode }: ModalProps) {
+  return (
+    <div className={styles.overlay} onClick={onClose}>
+      <div
+        ref={modalRef}
+        className={styles.modal}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-labelledby="form-title"
+        aria-modal="true"
+      >
+        <div className={styles.header}>
+          <h2 id="form-title" className={styles.title}>
+            {isEditMode ? 'Edit Event' : 'Create New Event'}
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className={styles.closeButton}
+            aria-label="Close dialog"
+          >
+            ✕
+          </button>
+        </div>
+
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Field({ children }: FieldProps) {
+  return <div className={styles.field}>{children}</div>;
+}
+
+function FieldLabel({ htmlFor, label, required = false }: FieldLabelProps) {
+  return (
+    <label htmlFor={htmlFor} className={styles.label}>
+      {label}{' '}
+      {required && (
+        <span className={styles.required} aria-label="required">
+          *
+        </span>
+      )}
+    </label>
+  );
+}
+
+function FieldError({ id, message }: FieldErrorProps) {
+  if (!message) {
+    return null;
+  }
+
+  return (
+    <p id={id} className={styles.error} role="alert">
+      {message}
+    </p>
+  );
+}
+
+function TitleField({ register, error }: TitleFieldProps) {
+  return (
+    <Field>
+      <FieldLabel htmlFor="title" label="Title" required />
+      <input
+        id="title"
+        type="text"
+        className={clsx(styles.input, error && styles.inputError)}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? 'title-error' : undefined}
+        {...register('title')}
+      />
+      <FieldError id="title-error" message={error} />
+    </Field>
+  );
+}
+
+function DateField({ control, error }: DateFieldProps) {
+  return (
+    <Field>
+      <FieldLabel htmlFor="date" label="Date & Time" required />
+      <Controller
+        name="date"
+        control={control}
+        render={({ field }) => (
+          <input
+            id="date"
+            type="datetime-local"
+            className={clsx(styles.input, error && styles.inputError)}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? 'date-error' : undefined}
+            value={
+              field.value instanceof Date
+                ? field.value.toISOString().slice(0, 16)
+                : ''
+            }
+            onChange={(e) => {
+              const date = e.target.value
+                ? new Date(e.target.value)
+                : new Date();
+              field.onChange(date);
+            }}
+          />
+        )}
+      />
+      <FieldError id="date-error" message={error} />
+    </Field>
+  );
+}
+
+function StatusField({ register, error }: StatusFieldProps) {
+  return (
+    <Field>
+      <FieldLabel htmlFor="status" label="Status" required />
+      <select
+        id="status"
+        className={clsx(styles.select, error && styles.inputError)}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? 'status-error' : undefined}
+        {...register('status')}
+      >
+        <option value="pending">Pending</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <FieldError id="status-error" message={error} />
+    </Field>
+  );
+}
+
+function PriorityField({ register, error }: PriorityFieldProps) {
+  return (
+    <Field>
+      <FieldLabel htmlFor="priority" label="Priority" required />
+      <select
+        id="priority"
+        className={clsx(styles.select, error && styles.inputError)}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? 'priority-error' : undefined}
+        {...register('priority')}
+      >
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+      <FieldError id="priority-error" message={error} />
+    </Field>
+  );
+}
+
+function CategoryField({ register, error }: CategoryFieldProps) {
+  return (
+    <Field>
+      <FieldLabel htmlFor="category" label="Category" />
+      <input
+        id="category"
+        type="text"
+        className={clsx(styles.input, error && styles.inputError)}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? 'category-error' : undefined}
+        placeholder="e.g., Development, Design, Meeting"
+        {...register('category')}
+      />
+      <FieldError id="category-error" message={error} />
+    </Field>
+  );
+}
+
+function DescriptionField({ register, error }: DescriptionFieldProps) {
+  return (
+    <Field>
+      <FieldLabel htmlFor="description" label="Description" />
+      <textarea
+        id="description"
+        rows={4}
+        className={clsx(styles.textarea, error && styles.inputError)}
+        aria-invalid={error ? 'true' : 'false'}
+        aria-describedby={error ? 'description-error' : undefined}
+        placeholder="Add any additional details..."
+        {...register('description')}
+      />
+      <FieldError id="description-error" message={error} />
+    </Field>
+  );
+}
+
+function SuccessRegion() {
+  return (
+    <div
+      className={styles.successRegion}
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    />
+  );
+}
+
+function FormActions({ isSubmitting, isEditMode, onCancel }: FormActionsProps) {
+  return (
+    <div className={styles.actions}>
+      <button
+        type="button"
+        onClick={onCancel}
+        className={clsx(styles.button, styles.buttonSecondary)}
+        disabled={isSubmitting}
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        className={clsx(styles.button, styles.buttonPrimary)}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <>
+            <span className={styles.spinner} aria-hidden="true" />
+            Saving...
+          </>
+        ) : (
+          <>{isEditMode ? 'Update Event' : 'Create Event'}</>
+        )}
+      </button>
+    </div>
+  );
+}
 
 export function EventForm({ event, onSave, onCancel }: EventFormProps) {
   const isEditMode = !!event;
@@ -85,244 +324,28 @@ export function EventForm({ event, onSave, onCancel }: EventFormProps) {
   }, [errors, setFocus]);
 
   return (
-    <div className={styles.overlay} onClick={handleCancel}>
-      <div
-        ref={modalRef}
-        className={styles.modal}
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-labelledby="form-title"
-        aria-modal="true"
+    <Modal modalRef={modalRef} onClose={handleCancel} isEditMode={isEditMode}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={styles.form}
+        noValidate
       >
-        {/* Header */}
-        <div className={styles.header}>
-          <h2 id="form-title" className={styles.title}>
-            {isEditMode ? 'Edit Event' : 'Create New Event'}
-          </h2>
-          <button
-            type="button"
-            onClick={handleCancel}
-            className={styles.closeButton}
-            aria-label="Close dialog"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className={styles.form}
-          noValidate
-        >
-          {/* Title Field */}
-          <div className={styles.field}>
-            <label htmlFor="title" className={styles.label}>
-              Title{' '}
-              <span className={styles.required} aria-label="required">
-                *
-              </span>
-            </label>
-            <input
-              id="title"
-              type="text"
-              className={clsx(styles.input, errors.title && styles.inputError)}
-              aria-invalid={errors.title ? 'true' : 'false'}
-              aria-describedby={errors.title ? 'title-error' : undefined}
-              {...register('title')}
-            />
-            {errors.title && (
-              <p id="title-error" className={styles.error} role="alert">
-                {errors.title.message}
-              </p>
-            )}
-          </div>
-
-          {/* Date Field */}
-          <div className={styles.field}>
-            <label htmlFor="date" className={styles.label}>
-              Date & Time{' '}
-              <span className={styles.required} aria-label="required">
-                *
-              </span>
-            </label>
-            <Controller
-              name="date"
-              control={control}
-              render={({ field }) => (
-                <input
-                  id="date"
-                  type="datetime-local"
-                  className={clsx(
-                    styles.input,
-                    errors.date && styles.inputError,
-                  )}
-                  aria-invalid={errors.date ? 'true' : 'false'}
-                  aria-describedby={errors.date ? 'date-error' : undefined}
-                  value={
-                    field.value instanceof Date
-                      ? field.value.toISOString().slice(0, 16)
-                      : ''
-                  }
-                  onChange={(e) => {
-                    const date = e.target.value
-                      ? new Date(e.target.value)
-                      : new Date();
-                    field.onChange(date);
-                  }}
-                />
-              )}
-            />
-            {errors.date && (
-              <p id="date-error" className={styles.error} role="alert">
-                {errors.date.message}
-              </p>
-            )}
-          </div>
-
-          {/* Status Field */}
-          <div className={styles.field}>
-            <label htmlFor="status" className={styles.label}>
-              Status{' '}
-              <span className={styles.required} aria-label="required">
-                *
-              </span>
-            </label>
-            <select
-              id="status"
-              className={clsx(
-                styles.select,
-                errors.status && styles.inputError,
-              )}
-              aria-invalid={errors.status ? 'true' : 'false'}
-              aria-describedby={errors.status ? 'status-error' : undefined}
-              {...register('status')}
-            >
-              <option value="pending">Pending</option>
-              <option value="completed">Completed</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-            {errors.status && (
-              <p id="status-error" className={styles.error} role="alert">
-                {errors.status.message}
-              </p>
-            )}
-          </div>
-
-          {/* Priority Field */}
-          <div className={styles.field}>
-            <label htmlFor="priority" className={styles.label}>
-              Priority{' '}
-              <span className={styles.required} aria-label="required">
-                *
-              </span>
-            </label>
-            <select
-              id="priority"
-              className={clsx(
-                styles.select,
-                errors.priority && styles.inputError,
-              )}
-              aria-invalid={errors.priority ? 'true' : 'false'}
-              aria-describedby={errors.priority ? 'priority-error' : undefined}
-              {...register('priority')}
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-            {errors.priority && (
-              <p id="priority-error" className={styles.error} role="alert">
-                {errors.priority.message}
-              </p>
-            )}
-          </div>
-
-          {/* Category Field */}
-          <div className={styles.field}>
-            <label htmlFor="category" className={styles.label}>
-              Category
-            </label>
-            <input
-              id="category"
-              type="text"
-              className={clsx(
-                styles.input,
-                errors.category && styles.inputError,
-              )}
-              aria-invalid={errors.category ? 'true' : 'false'}
-              aria-describedby={errors.category ? 'category-error' : undefined}
-              placeholder="e.g., Development, Design, Meeting"
-              {...register('category')}
-            />
-            {errors.category && (
-              <p id="category-error" className={styles.error} role="alert">
-                {errors.category.message}
-              </p>
-            )}
-          </div>
-
-          {/* Description Field */}
-          <div className={styles.field}>
-            <label htmlFor="description" className={styles.label}>
-              Description
-            </label>
-            <textarea
-              id="description"
-              rows={4}
-              className={clsx(
-                styles.textarea,
-                errors.description && styles.inputError,
-              )}
-              aria-invalid={errors.description ? 'true' : 'false'}
-              aria-describedby={
-                errors.description ? 'description-error' : undefined
-              }
-              placeholder="Add any additional details..."
-              {...register('description')}
-            />
-            {errors.description && (
-              <p id="description-error" className={styles.error} role="alert">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
-
-          {/* Success Message Region */}
-          <div
-            className={styles.successRegion}
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          />
-
-          {/* Form Actions */}
-          <div className={styles.actions}>
-            <button
-              type="button"
-              onClick={handleCancel}
-              className={clsx(styles.button, styles.buttonSecondary)}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className={clsx(styles.button, styles.buttonPrimary)}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <span className={styles.spinner} aria-hidden="true" />
-                  Saving...
-                </>
-              ) : (
-                <>{isEditMode ? 'Update Event' : 'Create Event'}</>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <TitleField register={register} error={errors.title?.message} />
+        <DateField control={control} error={errors.date?.message} />
+        <StatusField register={register} error={errors.status?.message} />
+        <PriorityField register={register} error={errors.priority?.message} />
+        <CategoryField register={register} error={errors.category?.message} />
+        <DescriptionField
+          register={register}
+          error={errors.description?.message}
+        />
+        <SuccessRegion />
+        <FormActions
+          isSubmitting={isSubmitting}
+          isEditMode={isEditMode}
+          onCancel={handleCancel}
+        />
+      </form>
+    </Modal>
   );
 }
